@@ -15,7 +15,7 @@ exports.uploadImages = async (req, res) => {
       const url = await uploadToCloudinary(file, path);
       images.push(url);
       // after removing from tmp folder
-      removeTmp(file.tempFilePath)
+      removeTmp(file.tempFilePath);
     }
     res.json(images);
   } catch (error) {
@@ -23,6 +23,23 @@ exports.uploadImages = async (req, res) => {
   }
 };
 
+//taking images from cloudinary
+exports.listImages = async (req, res) => {
+  const { path, sort, max } = req.body;
+
+  cloudinary.v2.search
+    .expression(`${path}`)
+    .sort_by("created_at",`${sort}`)
+    .max_results(max)
+    .execute()
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((err) => {
+      console.log(err.error.message);
+    });
+};
+//////////
 const uploadToCloudinary = async (file, path) => {
   return new Promise((resolve) => {
     cloudinary.v2.uploader.upload(
@@ -33,14 +50,14 @@ const uploadToCloudinary = async (file, path) => {
       },
       (err, res) => {
         if (err) {
-            //removing image from tmp folder
+          //removing image from tmp folder
           removeTmp(file.tempFilePath);
           return res
             .status(400)
             .json({ message: "Upload image failed", error: err });
         }
         resolve({
-            //secure_url is image url which we upload into cloud storage.we pushing this url to image [] above
+          //secure_url is image url which we upload into cloud storage.we pushing this url to image [] above
           url: res.secure_url,
         });
       }

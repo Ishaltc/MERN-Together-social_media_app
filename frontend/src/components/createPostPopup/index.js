@@ -51,7 +51,8 @@ export default function CreatePostPopup({ user, setVisible }) {
       });
       //     console.log(images)
       // console.log(postImages)
-      const path = `${user.username}/post Images`;
+      // cloudinary folder name
+      const path = `${user.username}/post_images`;
       // passing in formData as we did in postman
       let formData = new FormData();
       formData.append("path", path);

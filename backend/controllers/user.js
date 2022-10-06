@@ -27,7 +27,6 @@ exports.register = async (req, res) => {
       gender,
     } = req.body;
 
-   
     //validations
     if (!validateEmail(email)) {
       return res.status(400).json({ message: "invalid email address" });
@@ -261,7 +260,25 @@ exports.newPassword = async (req, res) => {
         password: cryptedPassword,
       }
     );
-    res.status(200).send({ message:"Password has been updated successfully."});
+    res
+      .status(200)
+      .send({ message: "Password has been updated successfully." });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getProfile = async (req, res) => {
+  try {
+    const { username } = req.params;
+    console.log(username);
+
+    const profile = await User.findOne({ username}).select("-password");
+    if(!profile){
+      return res.json({ ok: false})
+    }
+    res.json(profile);
+    
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
