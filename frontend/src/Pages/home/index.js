@@ -21,7 +21,7 @@ export default function Home({ setVisible, posts }) {
   // managing home page height according to the post
   return (
     <div className="home" style={{ height: `${height}px` }}>
-      <Header />
+      <Header page="home" />
       <LeftHome user={user} />
 
       <div className="home_middle" ref={middle}>

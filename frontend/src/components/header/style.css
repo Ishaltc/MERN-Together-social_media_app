@@ -582,7 +582,10 @@ header {
 }
 .active_header svg{
   fill:var(--together-text);
-
-
 }
+.active_link{
+background: var(--light-together-text);
+color:var(--together-text)
+}
+
 /*---Active header-----*/

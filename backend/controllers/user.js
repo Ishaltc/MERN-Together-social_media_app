@@ -271,7 +271,7 @@ exports.newPassword = async (req, res) => {
 exports.getProfile = async (req, res) => {
   try {
     const { username } = req.params;
-    console.log(username);
+    
 
     const profile = await User.findOne({ username}).select("-password");
     if(!profile){
