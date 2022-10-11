@@ -57,7 +57,40 @@ a {
   gap: 6px;
   cursor: pointer;
 }
+/*--orangeButton--*/
+.orange_btn {
+  border: none;
+  outline: none;
+  background: var(--together-text);
+  padding: 8.5px 12px;
+  border-radius: 7px;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 14px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+}
 
+.light_orange_btn {
+  border: none;
+  outline: none;
+  background: var( --light-together-text);
+  padding: 8.5px 12px;
+  border-radius: 7px;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 14px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+}
 .gray_btn {
   border: none;
   outline: none;
@@ -74,7 +107,10 @@ a {
   gap: 6px;
   cursor: pointer;
 }
-
+.orange_btn,
+.gray_btn span{
+  transform: translateY(-1px);
+}
 
 
 
@@ -90,7 +126,7 @@ a {
   right: 0;
   bottom: 0;
   background: rgba(255, 255, 255, 0.768);
-  z-index: 90;
+  z-index: 999999999;
  
   
 }
@@ -137,3 +173,8 @@ border-radius: 5px;
 }
 /*--circle- */
 
+/*--filter--*/
+.filter_orange{
+color: var(--together-text);
+}
+/*--filter--*/

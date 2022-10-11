@@ -1,5 +1,6 @@
 const express = require('express');
 const { uploadImages ,listImages } = require('../controllers/upload');
+const { authUser } = require('../middlewares/auth');
 const {imageUpload}  = require('../middlewares/imageUpload');
 
 const router = express.Router();
@@ -8,7 +9,7 @@ const router = express.Router();
  router.post("/uploadImages",imageUpload, uploadImages)
 
  // getting images from the cloudinary
- router.get("/listImages",listImages)
+router.post("/listImages",authUser,listImages)
 
 
 

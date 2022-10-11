@@ -11,6 +11,7 @@ const { sentVerificationEmail, sentResetCode } = require("../helpers/mailer");
 const jwt = require("jsonwebtoken");
 const { redis } = require("googleapis/build/src/apis/redis");
 const generateCode = require("../helpers/generateCode");
+const Post = require("../models/Post");
 
 //register
 exports.register = async (req, res) => {
@@ -271,14 +272,39 @@ exports.newPassword = async (req, res) => {
 exports.getProfile = async (req, res) => {
   try {
     const { username } = req.params;
-    
 
-    const profile = await User.findOne({ username}).select("-password");
-    if(!profile){
-      return res.json({ ok: false})
+    const profile = await User.findOne({ username }).select("-password");
+    if (!profile) {
+      return res.json({ ok: false });
     }
-    res.json(profile);
-    
+    const posts = await Post.find({ user: profile._id })
+      .populate("user")
+      .sort({ createdAt: -1 });
+    res.json({ ...profile.toObject(), posts });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+//updating profile_picture
+exports.updateProfilePicture = async (req, res) => {
+  try {
+    const { url } = req.body;
+    await User.findByIdAndUpdate(req.user.id, { picture: url });
+    res.json(url);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.updateCover = async (req, res) => {
+  try {
+    console.log(55555555555);
+    const { url } = req.body;
+    await User.findByIdAndUpdate(req.user.id, {
+      cover: url,
+    });
+    res.json(url);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

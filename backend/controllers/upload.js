@@ -41,30 +41,36 @@ exports.listImages = async (req, res) => {
 };
 //////////
 const uploadToCloudinary = async (file, path) => {
-  return new Promise((resolve) => {
-    cloudinary.v2.uploader.upload(
-      // uploading file from tmp folder
-      file.tempFilePath,
-      {
-        folder: path,
-      },
-      (err, res) => {
-        if (err) {
-          //removing image from tmp folder
-          removeTmp(file.tempFilePath);
-          return res
-            .status(400)
-            .json({ message: "Upload image failed", error: err });
+  try {
+    return new Promise((resolve) => {
+      cloudinary.v2.uploader.upload(
+        // uploading file from tmp folder
+        file.tempFilePath,
+        {
+          folder: path,
+        },
+        (err, res) => {
+          if (err) {
+            //removing image from tmp folder
+            removeTmp(file.tempFilePath);
+            return res
+              .status(400)
+              .json({ message: "Upload image failed" });
+          }
+          resolve({
+            //secure_url is image url which we upload into cloud storage.we pushing this url to image [] above
+            url: res.secure_url,
+          });
         }
-        resolve({
-          //secure_url is image url which we upload into cloud storage.we pushing this url to image [] above
-          url: res.secure_url,
-        });
-      }
-    );
-  });
-};
-
+      );
+    });
+  
+  
+  } catch (error) {
+    console.log(error.error.message);
+  }
+}
+ 
 const removeTmp = (path) => {
   fs.unlink(path, (err) => {
     if (err) throw err;

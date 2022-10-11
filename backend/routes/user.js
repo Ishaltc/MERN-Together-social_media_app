@@ -12,6 +12,8 @@ const {
   validateResetCode,
   newPassword,
   getProfile,
+  updateProfilePicture,
+  updateCover
 } = require("../controllers/user");
 const router = express.Router();
 
@@ -25,6 +27,8 @@ router.post("/findUser",findUser)
 router.post("/sendResetPasswordCode",sendResetPasswordCode)   
 router.post("/validateResetCode",validateResetCode)  
 router.post("/newPassword",newPassword)  
-router.get("/getProfile/:username",authUser,getProfile)                                                                                      
+router.get("/getProfile/:username",authUser,getProfile)  
+router.put("/updateProfilePicture",authUser,updateProfilePicture)
+router.put("/updateCover",authUser,updateCover)
 
 module.exports = router;
