@@ -9,6 +9,7 @@ import { postsReducer } from "./functions/reducers";
 import Home from "./Pages/home";
 import Activate from "./Pages/home/activate";
 import Login from "./Pages/login";
+import MessengerApp from "./Pages/messanger";
 import Profile from "./Pages/profile";
 import Reset from "./Pages/reset";
 import LoggedInRoutes from "./routes/LoggedInRoutes";
@@ -17,6 +18,7 @@ import NotLoggedInRoutes from "./routes/NotLoggedInRoutes";
 
 function App() {
   const [visible, setVisible] = useState(false);
+  const [newPost,setNewPost]=useState(false);
   const { user } = useSelector((state) => ({ ...state }));
 
   const [{ loading, error, posts }, dispatch] = useReducer(postsReducer, {
@@ -28,7 +30,7 @@ function App() {
 
   useEffect(() => {
     getAllPosts();
-  }, []);
+  }, [setNewPost]);
 
   const getAllPosts = async () => {
     try {
@@ -58,7 +60,7 @@ function App() {
   //console.log(posts);
   return (
     <div>
-      {visible && <CreatePostPopup user={user} setVisible={setVisible} />}
+      {visible && <CreatePostPopup user={user} setVisible={setVisible} setNewPost={setNewPost}/>}
       <Routes>
         <Route element={<LoggedInRoutes />}>
           <Route
@@ -69,6 +71,7 @@ function App() {
           <Route path="/profile" element={<Profile setVisible={setVisible} />} exact />
           <Route path="/profile/:username" element={<Profile />} exact />
           <Route path="/activate/:token" element={<Activate />} exact />
+          <Route path="/messenger" element={<MessengerApp />} exact />
         </Route>
         <Route element={<NotLoggedInRoutes />}>
           <Route path="/login" element={<Login />} exact />

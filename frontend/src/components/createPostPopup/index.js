@@ -10,7 +10,7 @@ import PostError from "./PostError";
 import dataURItoBlob from "../../helpers/dataURItoBlob";
 import { uploadImages } from "../../functions/uploadImages";
 
-export default function CreatePostPopup({ user, setVisible }) {
+export default function CreatePostPopup({ user, setVisible,setNewPost }) {
   const popup = useRef(null);
   const [showPrev, setShowPrev] = useState(false);
   const [text, setText] = useState("");
@@ -18,6 +18,10 @@ export default function CreatePostPopup({ user, setVisible }) {
   const [background, setBackground] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+
+
+
 
   useClickOutside(popup, () => {
     setVisible(false);
@@ -39,6 +43,7 @@ export default function CreatePostPopup({ user, setVisible }) {
         setBackground("");
         setText("");
         setVisible(false);
+        setNewPost((prev) => !prev)
       } else {
         setError(response);
       }
@@ -84,6 +89,7 @@ export default function CreatePostPopup({ user, setVisible }) {
       if (response === "okay") {
         setBackground("");
         setText("");
+        setNewPost((prev) => !prev)
         setVisible(false);
       } else {
         setError(response);

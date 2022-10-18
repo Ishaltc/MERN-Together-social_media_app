@@ -7,8 +7,11 @@ const fileUpload = require("express-fileupload");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-const { log } = require("console");
+const logger = require('morgan');
+const helmet = require("helmet");
 
+app.use(helmet());
+app.use(logger('dev'));
 app.use(cors());
 dotenv.config();
 app.use(express.json());

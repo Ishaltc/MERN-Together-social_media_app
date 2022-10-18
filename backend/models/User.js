@@ -34,8 +34,8 @@ const userSchema = mongoose.Schema(
     },
     picture: {
       type: String,
-      default: 
-     "https://res.cloudinary.com/df4mlwr6i/image/upload/v1663872316/samples/social%20media/profile_zhhruu.png",
+      default:
+        "https://res.cloudinary.com/df4mlwr6i/image/upload/v1663872316/samples/social%20media/profile_zhhruu.png",
     },
     cover: {
       type: String,
@@ -64,26 +64,42 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    register: {
+      type: Boolean,
+      default: false,
+    },
     isBlocked: {
       type: Boolean,
       default: false,
     },
-    friends: {
-      type: Array,
-      default: [],
-    },
-    following: {
-      type: Array,
-      default: [],
-    },
-    followers: {
-      type: Array,
-      default: [],
-    },
-    requests: {
-      type: Array,
-      default: [],
-    },
+    friends: [
+      {
+        type: ObjectId,
+        ref: "User",
+      },
+    ],
+    // following: {
+    //   type: Array,
+    //   default: [],
+    // },
+    following: [
+      {
+        type: ObjectId,
+        ref: "User",
+      },
+    ],
+    followers: [
+      {
+        type: ObjectId,
+        ref: "User",
+      },
+    ],
+    requests: [
+      {
+        type: ObjectId,
+        ref: "User",
+      },
+    ],
     search: [
       {
         user: {

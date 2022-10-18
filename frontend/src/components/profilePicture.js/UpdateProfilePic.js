@@ -14,7 +14,8 @@ export default function UpdateProfilePicture({
   image,
   setError,
   setShow,
-  pRef,
+  PRef,
+  setNewProfile
 }) {
   const dispatch = useDispatch();
 
@@ -91,7 +92,8 @@ export default function UpdateProfilePicture({
            // console.log({new_post:1})
           setLoading(false);
           setImage("");
-          pRef.current.style.backgroundImage = `url(${res[0].url})`;
+          PRef.current.style.backgroundImage = `url(${res[0].url})`;
+          setNewProfile((prev)=> !prev)
           Cookies.set("user", 
             JSON.stringify({
                 ...user,
@@ -115,6 +117,7 @@ export default function UpdateProfilePicture({
       }
       setLoading(false);
     } catch (error) {
+      console.log(error);
       setLoading(false);
       setError(error.response.data.message);
     }

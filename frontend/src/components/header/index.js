@@ -25,6 +25,7 @@ export default function Header({page}) {
   const { user } = useSelector((user) => ({ ...user }));
   const color = "#65676b";
   const [showSearchMenu, setShowSearchMenu] = useState(false);
+  
   const [showAllMenu, setShowAllMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
 
@@ -109,9 +110,13 @@ export default function Header({page}) {
 
           {showAllMenu && <AllMenu />}
         </div>
+        
         <div className="circle_icon hover1">
+         <Link to ="/messenger">
           <Messenger />
+        </Link>
         </div>
+         
         <div className="circle_icon hover1">
           <Notifications />
           <div className="right_notification">5</div>

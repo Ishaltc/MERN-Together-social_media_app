@@ -1,7 +1,6 @@
 const express = require("express");
 const { authUser } = require("../middlewares/auth");
 
-
 const {
   register,
   activateAccount,
@@ -13,22 +12,37 @@ const {
   newPassword,
   getProfile,
   updateProfilePicture,
-  updateCover
+  updateCover,
+  addFriend,
+  cancelRequest,
+  unfollow,
+  follow,
+  acceptRequest,
+  unfriend,
+  deleteRequest,
+  getFriends,
 } = require("../controllers/user");
 const router = express.Router();
 
 router.post("/register", register);
 //here we have add authUser bcz we passing user token from frontend via header
-router.post("/activate",authUser, activateAccount);
+router.post("/activate", authUser, activateAccount);
 router.post("/login", login);
 //make sure user is logged in (authUser)
-router.post("/sendVerification",authUser,sendVerification)
-router.post("/findUser",findUser)
-router.post("/sendResetPasswordCode",sendResetPasswordCode)   
-router.post("/validateResetCode",validateResetCode)  
-router.post("/newPassword",newPassword)  
-router.get("/getProfile/:username",authUser,getProfile)  
-router.put("/updateProfilePicture",authUser,updateProfilePicture)
-router.put("/updateCover",authUser,updateCover)
+router.post("/sendVerification", authUser, sendVerification);
+router.post("/findUser", findUser);
+router.post("/sendResetPasswordCode", sendResetPasswordCode);
+router.post("/validateResetCode", validateResetCode);
+router.post("/newPassword", newPassword);
+router.get("/getProfile/:username", authUser, getProfile);
+router.put("/updateProfilePicture", authUser, updateProfilePicture);
+router.put("/updateCover", authUser, updateCover);
+router.put("/addFriend/:id", authUser, addFriend);
+router.put("/cancelRequest/:id", authUser, cancelRequest);
+router.put("/follow/:id", authUser, follow);
+router.put("/unfollow/:id", authUser, unfollow);
+router.put("/acceptRequest/:id", authUser, acceptRequest);
+router.put("/unfriend/:id", authUser, unfriend);
+router.put("/deleteRequest/:id", authUser, deleteRequest);
 
 module.exports = router;

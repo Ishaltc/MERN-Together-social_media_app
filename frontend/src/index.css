@@ -37,7 +37,7 @@ a {
   --shadow-inset: rgba(255, 255, 255, 0.5);
   --together-text: rgba(255, 140, 0, 0.995);
   --light-together-text: rgba(249, 208, 159, 0.995);
-
+  --online:#4fb63b;
 }
 
 /*----Buttons----*/

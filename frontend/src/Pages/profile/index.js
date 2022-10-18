@@ -19,6 +19,7 @@ export default function Profile({ setVisible }) {
   const navigate = useNavigate();
   const { username } = useParams();
   const { user } = useSelector((state) => ({ ...state }));
+  const [newProfile,setNewProfile] =useState(false);
   const [photos, setPhotos] = useState({});
 
   let userName = username === undefined ? user.username : username;
@@ -32,7 +33,7 @@ export default function Profile({ setVisible }) {
   //everything username change it sent the request then get info again
   useEffect(() => {
     getProfile();
-  }, [userName]);
+  }, [userName,newProfile]);
 
   let visitor = userName === user.username ? false : true;
   const path = `${userName}/*`;
@@ -84,7 +85,7 @@ export default function Profile({ setVisible }) {
     }
   };
   //console.log(photos);
-
+//console.log(profile);
   return (
     <div className="profile">
       <Header page="profile" />
@@ -95,6 +96,7 @@ export default function Profile({ setVisible }) {
             profile={profile}
             visitor={visitor}
             photos={photos.resources}
+            setNewProfile={setNewProfile}
           />
           <ProfileMenu />
         </div>

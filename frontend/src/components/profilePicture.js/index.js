@@ -5,7 +5,7 @@ import useClickOutside from "../../helpers/ClickOutside";
 import "./style.css";
 import UpdateProfilePic from "./UpdateProfilePic";
 
-export default function ProfilePicture({ setShow, PRef, photos }) {
+export default function ProfilePicture({ setShow, PRef, photos ,setNewProfile}) {
   // console.log(photos);
   const popup = useRef(null);
   const { user } = useSelector((state) => ({ ...state }));
@@ -110,6 +110,7 @@ export default function ProfilePicture({ setShow, PRef, photos }) {
           setError={setError}
           setShow={setShow}
           PRef={PRef}
+          setNewProfile={setNewProfile}
         />
       )}
     </div>
