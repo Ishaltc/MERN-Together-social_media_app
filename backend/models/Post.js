@@ -24,9 +24,9 @@ const postSchema = new mongoose.Schema(
     background: {
       type: String,
     },
-    Comments: [
+    comments: [
       {
-        Comments: {
+        comment: {
           type: String,
         },
         image: {
@@ -34,11 +34,11 @@ const postSchema = new mongoose.Schema(
         },
         commentBy: {
           type: ObjectId,
-          ref: User,
+          ref: "User",
         },
         commentAt: {
           type: Date,
-          default: new Date(),
+          required: true,
         },
       },
     ],

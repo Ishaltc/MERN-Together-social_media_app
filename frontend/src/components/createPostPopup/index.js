@@ -10,7 +10,13 @@ import PostError from "./PostError";
 import dataURItoBlob from "../../helpers/dataURItoBlob";
 import { uploadImages } from "../../functions/uploadImages";
 
-export default function CreatePostPopup({ user, setVisible,setNewPost }) {
+export default function CreatePostPopup({
+  user,
+  setVisible,
+  posts,
+  dispatch,
+  profile,
+}) {
   const popup = useRef(null);
   const [showPrev, setShowPrev] = useState(false);
   const [text, setText] = useState("");
@@ -18,10 +24,6 @@ export default function CreatePostPopup({ user, setVisible,setNewPost }) {
   const [background, setBackground] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
-
-
-
 
   useClickOutside(popup, () => {
     setVisible(false);
@@ -39,11 +41,15 @@ export default function CreatePostPopup({ user, setVisible,setNewPost }) {
         user.token
       );
       setLoading(false);
-      if (response === "okay") {
+
+      if (response.status === "okay") {
+        dispatch({
+          type: profile ? "PROFILE_POSTS" :"POSTS_SUCCESS",
+          payload: [response.data, ...posts],
+        });
         setBackground("");
         setText("");
         setVisible(false);
-        setNewPost((prev) => !prev)
       } else {
         setError(response);
       }
@@ -66,12 +72,24 @@ export default function CreatePostPopup({ user, setVisible,setNewPost }) {
       });
       const response = await uploadImages(formData, path, user.token);
       //console.log(response)
-      await createPost(null, null, text, response, user.id, user.token);
+      const res = await createPost(
+        null,
+        null,
+        text,
+        response,
+        user.id,
+        user.token
+      );
       setLoading(false);
-      if (response === "okay") {
+      if (res.status === "okay") {
+        dispatch({
+          type: profile ? "PROFILE_POSTS" :"POSTS_SUCCESS",
+          payload: [res.data, ...posts],
+        });
         setText("");
         setImages("");
         setVisible(false);
+        // setNewPost((prev)=> +prev)
       } else {
         setError(response);
       }
@@ -86,10 +104,14 @@ export default function CreatePostPopup({ user, setVisible,setNewPost }) {
         user.token
       );
       setLoading(false);
-      if (response === "okay") {
+      if (response.status === "okay") {
+        dispatch({
+          type: profile ? "PROFILE_POSTS" :"POSTS_SUCCESS",
+          payload: [response.data, ...posts],
+        });
         setBackground("");
         setText("");
-        setNewPost((prev) => !prev)
+        // setNewPost((prev)=> +prev)
         setVisible(false);
       } else {
         setError(response);

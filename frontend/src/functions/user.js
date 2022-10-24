@@ -23,7 +23,7 @@ export const updateCover = async (url, token) => {
   try {
     const { data } = await axios.put(
       `${process.env.REACT_APP_BACKEND_URL}/updateCover`,
-      
+
       {
         url,
       },
@@ -50,7 +50,7 @@ export const addFriend = async (id, token) => {
         },
       }
     );
-    
+
     return "ok";
   } catch (error) {
     //console.log(error.response.data.message);
@@ -59,6 +59,7 @@ export const addFriend = async (id, token) => {
 };
 
 export const cancelRequest = async (id, token) => {
+
   try {
     const { data } = await axios.put(
       `${process.env.REACT_APP_BACKEND_URL}/cancelRequest/${id}`,
@@ -155,6 +156,140 @@ export const deleteRequest = async (id, token) => {
       }
     );
     return "ok";
+  } catch (error) {
+    return error.response.data.message;
+  }
+};
+
+//search in home page
+export const search = async (searchTerm, token) => {
+  try {
+    const { data } = await axios.post(
+      `${process.env.REACT_APP_BACKEND_URL}/search/${searchTerm}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return data;
+  } catch (error) {
+    return error.response.data.message;
+  }
+};
+
+//display search history
+export const addToSearchHistory = async (searchUser, token) => {
+  try {
+    const { data } = await axios.put(
+      `${process.env.REACT_APP_BACKEND_URL}/addToSearchHistory`,
+      { searchUser },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return data;
+  } catch (error) {
+    return error.response.data.message;
+  }
+};
+
+//get search history
+
+export const getSearchHistory = async (token) => {
+  try {
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_BACKEND_URL}/getSearchHistory`,
+
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return data;
+  } catch (error) {
+    return error.response.data.message;
+  }
+};
+
+//removing search history
+
+export const removeFromSearch = async (searchUser, token) => {
+  try {
+    const { data } = await axios.put(
+      `${process.env.REACT_APP_BACKEND_URL}/removeFromSearch`,
+      {
+        searchUser,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return data;
+  } catch (error) {
+    return error.response.data.message;
+  }
+};
+
+// finding user's friends,requests and sent requests
+export const getFriendsPageInfos = async (token) => {
+  try {
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_BACKEND_URL}/getFriendsPageInfos`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return {status:"okay",data}
+  } catch (error) {
+    return error.response.data.message;
+  }
+};
+
+
+//get chat
+
+export const userChat = async (userId,token) => {
+  try {
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_BACKEND_URL}/userChat/${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return data;
+  } catch (error) {
+    return error.response.data.message;
+  }
+};
+
+
+export const getFriends = async (token) => {
+  
+  try {
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_BACKEND_URL}/getFriends`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+  
+    return data;
   } catch (error) {
     return error.response.data.message;
   }

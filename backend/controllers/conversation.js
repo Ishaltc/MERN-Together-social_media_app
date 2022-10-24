@@ -43,3 +43,7 @@ exports.getPartnerData = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+
+//friend and i
+

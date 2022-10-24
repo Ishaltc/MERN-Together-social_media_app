@@ -10,18 +10,18 @@ import Post from "../../components/post";
 import useClickOutside from "../../helpers/ClickOutside";
 import "./style.css";
 
-export default function Home({ setVisible, posts }) {
+export default function Home({ setVisible, posts ,loading,getAllPosts}) {
   const { user } = useSelector((user) => ({ ...user }));
   // managing home page height according to the post
   const middle = useRef(null);
   const [height, setHeight] = useState();
   useEffect(() => {
     setHeight(middle.current.clientHeight);
-  });
+  },[loading,height]);
   // managing home page height according to the post
   return (
     <div className="home" style={{ height: `${height}px` }}>
-      <Header page="home" />
+      <Header page="home" getAllPosts={getAllPosts} />
       <LeftHome user={user} />
 
       <div className="home_middle" ref={middle}>

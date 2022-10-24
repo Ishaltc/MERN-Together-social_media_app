@@ -12,7 +12,7 @@ const jwt = require("jsonwebtoken");
 const { redis } = require("googleapis/build/src/apis/redis");
 const generateCode = require("../helpers/generateCode");
 const Post = require("../models/Post");
-const { reset } = require("nodemon");
+const mongoose = require("mongoose");
 
 //register
 exports.register = async (req, res) => {
@@ -72,6 +72,7 @@ exports.register = async (req, res) => {
       bMonth,
       bDay,
       gender,
+      friends
     }).save();
 
     const emailVerificationToken = generateToken(
@@ -275,9 +276,8 @@ exports.getProfile = async (req, res) => {
   try {
     const { username } = req.params;
     const user = await User.findById(req.user.id);
-    const profile = await User.findOne({ username })
-      .select("-password")
-      // .populate("friends", "first_name last_name username picture");
+    const profile = await User.findOne({ username }).select("-password");
+    // .populate("friends", "first_name last_name username picture");
     const friendShip = {
       friends: false,
       following: false,
@@ -305,9 +305,12 @@ exports.getProfile = async (req, res) => {
     }
 
     const posts = await Post.find({ user: profile._id })
+
       .populate("user")
       .sort({ createdAt: -1 });
-      await profile.populate("friends", "first_name last_name username picture");
+
+    await profile.populate("friends", "first_name last_name username picture");
+    console.log(posts);
     res.json({ ...profile.toObject(), posts, friendShip });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -339,6 +342,31 @@ exports.updateCover = async (req, res) => {
 
 //add friend
 
+// exports.addFriend = async (req, res) => {
+//   try {
+//     if (req.user.id !== req.params.id) {
+//       const sender = await User.findById(req.user.id);
+//       const receiver = await User.findById(req.params.id);
+//       if (
+//         !receiver.requests.includes(sender._id) &&
+//         !receiver.friends.includes(sender._id)
+//       ) {
+//         await receiver.updateOne({ $push: { requests: sender._id } });
+//         await receiver.updateOne({ $push: { followers: sender._id } });
+//         await sender.updateOne({ $push: { following: receiver._id } });
+//         res.json({ message: "friend request has been send" });
+//       } else {
+//         return res.status(400).json({ message: "Already sent" });
+//       }
+//     } else {
+//       return res
+//         .status(400)
+//         .json({ message: "You can't send a request to yourselves" });
+//     }
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
 exports.addFriend = async (req, res) => {
   try {
     if (req.user.id !== req.params.id) {
@@ -348,17 +376,23 @@ exports.addFriend = async (req, res) => {
         !receiver.requests.includes(sender._id) &&
         !receiver.friends.includes(sender._id)
       ) {
-        await receiver.updateOne({ $push: { requests: sender._id } });
-        await receiver.updateOne({ $push: { followers: sender._id } });
-        await sender.updateOne({ $push: { following: receiver._id } });
-        res.json({ message: "friend request has been send" });
+        await receiver.updateOne({
+          $push: { requests: sender._id },
+        });
+        await receiver.updateOne({
+          $push: { followers: sender._id },
+        });
+        await sender.updateOne({
+          $push: { following: receiver._id },
+        });
+        res.json({ message: "friend request has been sent" });
       } else {
         return res.status(400).json({ message: "Already sent" });
       }
     } else {
       return res
         .status(400)
-        .json({ message: "You can't send a request to yourselves" });
+        .json({ message: "You can't send a request to yourself" });
     }
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -532,6 +566,119 @@ exports.deleteRequest = async (req, res) => {
         .status(400)
         .json({ message: "You can't delete your yourselves" });
     }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+//search in home page
+exports.search = async (req, res) => {
+  try {
+    const searchTerm = req.params.searchTerm;
+    const results = await User.find({ $text: { $search: searchTerm } }).select(
+      "first_name last_name username picture"
+    );
+
+    res.json(results);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+//adding search history
+exports.addToSearchHistory = async (req, res) => {
+  try {
+    const { searchUser } = req.body;
+    const search = {
+      user: searchUser,
+      createdAt: new Date(),
+    };
+    const user = await User.findById(req.user.id);
+    const check = user.search.find((x) => x.user.toString() === searchUser);
+    if (check) {
+      await User.updateOne(
+        {
+          _id: req.user.id,
+          "search._id": check._id,
+        },
+        {
+          $set: { "search.$.createdAt": new Date() },
+        }
+      );
+    } else {
+      await User.findByIdAndUpdate(req.user.id, {
+        $push: {
+          search,
+        },
+      });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+//get search history
+
+exports.getSearchHistory = async (req, res) => {
+  try {
+    const results = await User.findById(req.user.id)
+      .select("search")
+      .populate("search.user", "first_name last_name username picture");
+    const { search } = results;
+
+    res.json(search);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+//deleting search history
+exports.removeFromSearch = async (req, res) => {
+  try {
+    const { searchUser } = req.body;
+    await User.updateOne(
+      {
+        _id: req.user.id,
+      },
+      { $pull: { search: { user: searchUser } } }
+    );
+    res.json({ message: "User has been deleted from search history" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// finding user's friends,requests and sent requests
+exports.getFriendsPageInfos = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id)
+      .select("friends request")
+      .populate("friends", "first_name last_name username picture")
+      .populate("requests", "first_name last_name username picture");
+    //checking if any other users have current user request
+    const sentRequests = await User.find({
+      requests: mongoose.Types.ObjectId(req.user.id),
+    }).select("first_name last_name username picture");
+
+    res.json({
+      friends: user.friends,
+      requests: user.requests,
+      sentRequests,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+//get my friends
+
+exports.getMyFriends = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id)
+      .select("friends")
+      .populate("friends", "first_name last_name username picture");
+    res.status(200).json({friends:user.friends});
+    
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

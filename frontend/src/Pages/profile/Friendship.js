@@ -17,7 +17,7 @@ export default function Friendship({ friendshipp, profileId }) {
   useEffect(() => {
     setFriendship(friendshipp);
   }, [friendshipp]);
-  console.log(friendshipp);
+
   const [friendsMenu, setFriendsMenu] = useState(false);
   const [respondMenu, setRespondMenu] = useState(false);
   const { user } = useSelector((state) => ({ ...state }));

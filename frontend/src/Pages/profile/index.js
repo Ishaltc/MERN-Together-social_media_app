@@ -3,6 +3,7 @@ import { useEffect, useReducer, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import CreatePost from "../../components/createPost";
+import CreatePostPopup from "../../components/createPostPopup";
 import Header from "../../components/header";
 import Post from "../../components/post";
 import { profileReducer } from "../../functions/reducers";
@@ -13,9 +14,12 @@ import PeopleYouMayKnow from "./PeopleYouMayKnow";
 import Photos from "./Photos";
 import ProfileMenu from "./ProfileMenu";
 import ProfilePictureInfos from "./ProfilePictureInfos";
+import Skeleton,{SkeletonTheme} from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 import "./style.css";
 
-export default function Profile({ setVisible }) {
+export default function Profile({getAllPosts }) {
+  const [visible,setVisible] = useState(false)
   const navigate = useNavigate();
   const { username } = useParams();
   const { user } = useSelector((state) => ({ ...state }));
@@ -84,14 +88,24 @@ export default function Profile({ setVisible }) {
       });
     }
   };
-  //console.log(photos);
-//console.log(profile);
+
+
   return (
     <div className="profile">
-      <Header page="profile" />
+
+           {visible && (
+        <CreatePostPopup
+          user={user}
+          setVisible={setVisible}
+           posts={profile?.posts}
+          dispatch={dispatch}
+          profile
+        />
+      )}
+      <Header page="profile"  getAllPosts={getAllPosts}/>
       <div className="profile_top">
         <div className="profile_container">
-          <Cover cover={profile.cover} visitor={visitor} photos={photos.resources}/>
+          <Cover cover={profile.cover} visitor={visitor} photos={photos.resources} getProfile={getProfile}/>
           <ProfilePictureInfos
             profile={profile}
             visitor={visitor}
@@ -107,11 +121,11 @@ export default function Profile({ setVisible }) {
             <PeopleYouMayKnow />
             <div className="profile_grid">
               <div className="profile_left">
-                <Photos
+                {/* <Photos
                   username={userName}
                   token={user.token}
                   photos={photos}
-                />
+                /> */}
                 <Friends friends={profile.friends} />
               </div>
               <div className="profile_right">

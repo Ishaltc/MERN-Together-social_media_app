@@ -9,7 +9,7 @@ import { createPost } from "../../functions/post";
 import PulseLoader from "react-spinners/PulseLoader";
 import OldCovers from "./oldCover";
 
-export default function Cover({ cover, visitor ,photos}) {
+export default function Cover({ cover, visitor ,photos,getProfile}) {
   const [showCoverMenu, setShowCoverMenu] = useState(false);
   const [coverPicture, setCoverPicture] = useState("");
   const [show ,setShow] = useState(false)
@@ -107,8 +107,9 @@ export default function Cover({ cover, visitor ,photos}) {
           user.id,
           user.token
         );
-        console.log(new_post);
+        // console.log(new_post);
         if (new_post === "okay") {
+          
           setLoading(false);
           setCoverPicture("");
           cRef.current.src = res[0].url;

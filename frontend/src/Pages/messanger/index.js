@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import Header from "../../components/header";
 import ChatOnline from "./ChatOnline";
-import Conversations from "./Conversations"; 
+import Conversations from "./Conversation";
 import Message from "./Message";
 import "./style.css";
 import { io } from "socket.io-client";
@@ -15,38 +15,38 @@ export default function MessengerApp() {
   const [messages, setMessages] = useState([]);
   const [arrivalMessage, setArrivalMessage] = useState(null);
   const [newMessage, setNewMessage] = useState("");
-  const [friendId,setFriendId] = useState("");
+  const [friendId, setFriendId] = useState("");
   const [onlineUsers, setOnlineUsers] = useState([]);
 
-  const socket = useRef(io("ws://localhost:8900",{
-    transports: ['websocket'],
-    secure: true,
-  }));
+  const socket = useRef(null);
   const scrollRef = useRef();
 
   useEffect(() => {
     socket.current = io("ws://localhost:8900");
     socket.current.on("getMessage", (data) => {
+      console.log(data);
       setArrivalMessage({
         sender: data.senderId,
         text: data.text,
         createdAt: Date.now(),
       });
     });
-    
-  }, []);
+  }, [arrivalMessage]);
 
-  //console.log(arrivalMessage)
+  console.log(arrivalMessage);
+  //  console.log(currentChat);
   useEffect(() => {
     arrivalMessage &&
       currentChat?.members.includes(arrivalMessage.sender) &&
-      setMessages((prev) => [...prev,arrivalMessage]);
+      setMessages((prev) => [...prev, arrivalMessage]);
   }, [arrivalMessage, currentChat]);
 
   useEffect(() => {
     socket.current.emit("addUser", user.id);
+
     socket.current.on("getUsers", (users) => {
       setOnlineUsers(users);
+      //  setOnlineUsers(user.friends.filter((f) => users.some((u) => u.userIs ===f)))
     });
   }, [user]);
 
@@ -63,8 +63,6 @@ export default function MessengerApp() {
     };
     getConversations();
   }, [user?.id]);
-
- 
 
   //console.log(currentChat);
   useEffect(() => {
@@ -92,7 +90,6 @@ export default function MessengerApp() {
     const receiverId = currentChat.members.find(
       (member) => member !== user._id
     );
-    
 
     socket.current.emit("sendMessage", {
       senderId: user.id,
@@ -105,7 +102,7 @@ export default function MessengerApp() {
         `${process.env.REACT_APP_BACKEND_URL}/message`,
         message
       );
-      console.log(res);
+      //console.log(res);
 
       setMessages([...messages, res.data]);
 
@@ -117,8 +114,6 @@ export default function MessengerApp() {
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-
-
 
   return (
     <>
@@ -135,6 +130,7 @@ export default function MessengerApp() {
                   conversation={c}
                   currentUser={user}
                   setFriendId={setFriendId}
+                  arrivalMessage={arrivalMessage}
                 />
               </div>
             ))}
@@ -147,11 +143,7 @@ export default function MessengerApp() {
                 <div className="chatBoxTop">
                   {messages.map((m, i) => (
                     <div ref={scrollRef}>
-                      <Message
-                        key={i}
-                        message={m}
-                        own={m.sender === user.id}
-                      />
+                      <Message key={i} message={m} own={m.sender === user.id} />
                     </div>
                   ))}
                 </div>

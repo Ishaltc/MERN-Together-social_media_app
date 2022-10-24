@@ -117,7 +117,6 @@ export default function UpdateProfilePicture({
       }
       setLoading(false);
     } catch (error) {
-      console.log(error);
       setLoading(false);
       setError(error.response.data.message);
     }

@@ -3,18 +3,77 @@ import "./style.css";
 import Moment from "react-moment";
 import { Dots, Public } from "../../svg";
 import ReactsPopup from "./ReactsPopup";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CreateComments from "./CreateComment";
 import PostMenu from "./PostMenu";
 import { useSelector } from "react-redux";
+import { getReacts, reactPost } from "../../functions/post";
+import Comment from "./Comment";
 
 export default function Post({ post, profile }) {
   const { user } = useSelector((user) => ({ ...user }));
   const [visible, setVisible] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [reacts, setReacts] = useState();
+  const [check, setCheck] = useState();
+  const [total, setTotal] = useState(0);
+  const [comments, setComments] = useState([]);
+  const [count, setCount] = useState(1);
+  const [checkSaved, setCheckSaved] = useState();
 
+  useEffect(() => {
+    getPostReacts();
+  }, [post]);
+
+  useEffect(() => {
+    setComments(post?.comments);
+  }, [post]);
+
+  const getPostReacts = async () => {
+    const res = await getReacts(post._id, user.token);
+    setReacts(res.reacts);
+    setCheck(res.check);
+    setTotal(res.total);
+    setCheckSaved(res.checkSaved);
+  };
+
+  const reactHandler = async (type) => {
+    reactPost(type, post._id, user.token);
+    if (check == type) {
+      setCheck();
+      let index = reacts.findIndex((x) => x.react == check);
+      if (index !== -1) {
+        setReacts([...reacts, (reacts[index].count = --reacts[index].count)]);
+        setTotal((prev) => --prev);
+      }
+    } else {
+      setCheck(type);
+      let index = reacts.findIndex((x) => x.react == type);
+      let index1 = reacts.findIndex((x) => x.react == check);
+      if (index !== -1) {
+        setReacts([...reacts, (reacts[index].count = ++reacts[index].count)]);
+        setTotal((prev) => ++prev);
+      }
+      if (index1 !== -1) {
+        setReacts([...reacts, (reacts[index1].count = --reacts[index1].count)]);
+        setTotal((prev) => --prev);
+      }
+    }
+  };
+
+  const showMore = () => {
+    setCount((prev) => prev + 3);
+  };
+  const showLess = () => {
+    setCount(1);
+  };
+  const postRef = useRef(null);
   return (
-    <div className="post" style={{ width: `${profile && "100%"}` }}>
+    <div
+      className="post"
+      style={{ width: `${profile && "100%"}` }}
+      ref={postRef}
+    >
       <div className="post_header">
         <Link
           to={`/profile/${post.user.username}`}
@@ -89,7 +148,7 @@ export default function Post({ post, profile }) {
       ) : post.type === "profilePicture" ? (
         <div className="post_profile_wrap">
           <div className="post_updated_bg">
-            <img src={post.user.cover} alt="" style={{}} />
+            <img src={post.user.cover} alt="" />
           </div>
           <img
             src={post.images[0].url}
@@ -99,22 +158,43 @@ export default function Post({ post, profile }) {
         </div>
       ) : (
         <div className="post_cover_wrap">
-          <img src={post.images[0].url} alt=""/>
+          <img src={post.images[0].url} alt="" />
         </div>
       )}
 
       <div className="post_infos">
         <div className="reacts_count">
-          <div className="reacts_count_imgs"></div>
-          <div className="reacts_count_num"></div>
+          <div className="reacts_count_imgs">
+            {reacts &&
+              reacts
+                .sort((a, b) => {
+                  return b.count - a.count;
+                })
+                .slice(0, 3)
+                .map(
+                  (react, i) =>
+                    react.count > 0 && (
+                      <img
+                        src={`../../../reacts/${react.react}.svg`}
+                        alt=""
+                        key={i}
+                      />
+                    )
+                )}
+          </div>
+          <div className="reacts_count_num">{total > 0 && total}</div>
         </div>
         <div className="to_right">
-          <div className="comments_count">13 comments</div>
+          <div className="comments_count">{comments?.length} comments</div>
           <div className="share_count">8 share</div>
         </div>
       </div>
       <div className="post_actions">
-        <ReactsPopup visible={visible} setVisible={setVisible} />
+        <ReactsPopup
+          visible={visible}
+          setVisible={setVisible}
+          reactHandler={reactHandler}
+        />
         <div
           className="post_action hover1"
           onMouseOver={() => {
@@ -127,11 +207,43 @@ export default function Post({ post, profile }) {
               setVisible(false);
             }, 500);
           }}
+          onClick={() => reactHandler(check ? check : "like")}
         >
-          <i className="like_icon"></i>
-          <span>Like</span>
+          {check ? (
+            <img
+              src={`../../../reacts/${check}.svg`}
+              alt=""
+              className="small_react"
+              style={{ width: "20px" }}
+            />
+          ) : (
+            <i className="like_icon"></i>
+          )}
+
+          <span
+            style={{
+              color: `${
+                check === "like"
+                  ? "#4267b2"
+                  : check === "love"
+                  ? "#f63459"
+                  : check === "haha"
+                  ? "#f7b125"
+                  : check === "sad"
+                  ? "#f7b125"
+                  : check === "wow"
+                  ? "#f7b125"
+                  : check === "wow"
+                  ? "#e4605a"
+                  : ""
+              }
+              `,
+            }}
+          >
+            {check ? check : "Like"}
+          </span>
         </div>
-        <div className="post_action hover1">
+        <div className="post_action hover1" onClick={() => showMore()}>
           <i className="comment_icon"></i>
           <span>comment</span>
         </div>
@@ -142,7 +254,33 @@ export default function Post({ post, profile }) {
       </div>
       <div className="comments_wrap">
         <di className="comments_order"></di>
-        <CreateComments />
+        <CreateComments
+          postId={post._id}
+          user={user}
+          setComments={setComments}
+          setCount={setCount}
+        />
+        {comments &&
+          comments
+            .sort((a, b) => {
+              return new Date(b.commentAt) - new Date(a.commentAt);
+            })
+            .slice(0, count)
+            .map((comment, i) => <Comment comment={comment} key={i} />)}
+        {count < comments.length && (
+          <>
+            <div className="view_comments" onClick={() => showMore()}>
+              View more comments
+            </div>
+          </>
+        )}
+        {count > 2 && (
+          <>
+            <div className="view_comments" onClick={() => showLess()}>
+              Cancel
+            </div>
+          </>
+        )}
       </div>
       {showMenu && (
         <PostMenu
@@ -150,6 +288,12 @@ export default function Post({ post, profile }) {
           postUserId={post?.user._id}
           imagesLength={post?.images?.length}
           setShowMenu={setShowMenu}
+          postId={post._id}
+          token={user.token}
+          checkSaved={checkSaved}
+          setCheckSaved={setCheckSaved}
+          images={post.images}
+          postRef={postRef}
         />
       )}
     </div>
