@@ -50,7 +50,6 @@ export const reactPost = async (react, postId, token) => {
 };
 
 //getReact
-
 export const getReacts = async (postId, token) => {
   try {
     const { data } = await axios.get(

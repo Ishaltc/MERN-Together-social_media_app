@@ -113,10 +113,10 @@ export default function LoginForm({ setVisible }) {
             </button>
             <RingLoader color="#FF8C00" loading={loading} size={30} />
           </div>
-          <Link to="/" className="sign_extra">
+          {/* <Link to="/" className="sign_extra">
             <b>Create a Page </b>
             for a celebrity, brand or business.
-          </Link>
+          </Link> */}
         </div>
       </div>
     </div>

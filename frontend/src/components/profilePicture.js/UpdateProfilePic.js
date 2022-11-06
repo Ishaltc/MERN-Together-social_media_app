@@ -18,6 +18,7 @@ export default function UpdateProfilePicture({
   setNewProfile
 }) {
   const dispatch = useDispatch();
+  
 
   const [description, setDescription] = useState("");
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -74,6 +75,7 @@ export default function UpdateProfilePicture({
       formData.append("path", path);
      
       const res = await uploadImages(formData, path, user.token);
+      console.log(res)
       const updated_picture = await newProfilePicture(res[0].url, user.token);
     //   console.log(updated_picture);
       if (updated_picture === "okay") {

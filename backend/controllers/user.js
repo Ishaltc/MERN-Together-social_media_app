@@ -62,6 +62,7 @@ exports.register = async (req, res) => {
     const tempUsername = first_name + last_name;
     const newUsername = await validUserName(tempUsername);
 
+    
     const user = await new User({
       first_name,
       last_name,
@@ -72,7 +73,7 @@ exports.register = async (req, res) => {
       bMonth,
       bDay,
       gender,
-      friends
+      
     }).save();
 
     const emailVerificationToken = generateToken(

@@ -24,16 +24,21 @@ export default function MessengerApp() {
   useEffect(() => {
     socket.current = io("ws://localhost:8900");
     socket.current.on("getMessage", (data) => {
-      console.log(data);
+     
+     
       setArrivalMessage({
         sender: data.senderId,
         text: data.text,
         createdAt: Date.now(),
       });
     });
-  }, [arrivalMessage]);
 
-  console.log(arrivalMessage);
+  
+
+    
+  }, []);
+
+ 
   //  console.log(currentChat);
   useEffect(() => {
     arrivalMessage &&
@@ -43,8 +48,10 @@ export default function MessengerApp() {
 
   useEffect(() => {
     socket.current.emit("addUser", user.id);
+  
 
     socket.current.on("getUsers", (users) => {
+    
       setOnlineUsers(users);
       //  setOnlineUsers(user.friends.filter((f) => users.some((u) => u.userIs ===f)))
     });
