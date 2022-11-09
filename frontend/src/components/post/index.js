@@ -186,7 +186,7 @@ export default function Post({ post, profile }) {
         </div>
         <div className="to_right">
           <div className="comments_count">{comments?.length} comments</div>
-          <div className="share_count">8 share</div>
+          {/* <div className="share_count">8 share</div> */}
         </div>
       </div>
       <div className="post_actions">
@@ -247,10 +247,10 @@ export default function Post({ post, profile }) {
           <i className="comment_icon"></i>
           <span>comment</span>
         </div>
-        <div className="post_action hover1">
+        {/* <div className="post_action hover1">
           <i className="share_icon"></i>
           <span>share</span>
-        </div>
+        </div> */}
       </div>
       <div className="comments_wrap">
         <di className="comments_order"></di>

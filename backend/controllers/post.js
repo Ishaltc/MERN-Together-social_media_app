@@ -17,6 +17,7 @@ exports.createPost = async (req, res) => {
 //getAllPost
 exports.getAllPosts = async (req, res) => {
   try {
+  
     const followingTemp = await User.findById(req.user.id).select("following");
     const following = followingTemp.following;
     const promises = following.map((user) => {
@@ -41,7 +42,9 @@ exports.getAllPosts = async (req, res) => {
     });
 
     res.json(followingPosts);
+    
   } catch (error) {
+    
     return res.status(500).json({ message: error.message });
   }
 };
@@ -50,9 +53,7 @@ exports.getAllPosts = async (req, res) => {
 exports.comment = async (req, res) => {
   try {
     const { comment, image, postId } = req.body;
-
-    // console.log(image)
-
+    //console.log(image)
     let newComments = await Post.findByIdAndUpdate(
       postId,
       {
@@ -72,7 +73,7 @@ exports.comment = async (req, res) => {
 
     res.json(newComments.comments);
   } catch (error) {
-    console.log(error.message);
+   // console.log(error.message);
     return res.status(500).json({ message: error.message });
   }
 };

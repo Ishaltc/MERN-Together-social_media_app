@@ -13,8 +13,11 @@ export const newProfilePicture = async (url, token) => {
         },
       }
     );
+   
     return "okay";
+
   } catch (error) {
+
     return error.response.data.message;
   }
 };

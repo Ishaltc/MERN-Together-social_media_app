@@ -13,6 +13,7 @@ export default function ProfilePicture({ setShow, PRef, photos ,setNewProfile}) 
   const refInput = useRef(null);
   const [image, setImage] = useState("");
   const [error, setError] = useState("");
+
   const handleImage = (e) => {
     let file = e.target.files[0];
     if (
@@ -78,7 +79,7 @@ export default function ProfilePicture({ setShow, PRef, photos ,setNewProfile}) 
         <div className="old_pictures_wrap scrollbar">
           <h4>Your profile pictures</h4>
           <div className="old_pictures">
-            {photos
+            {photos && photos 
               .filter(
                 (img) => img.folder === `${user.username}/profile_pictures`
               )
@@ -93,7 +94,7 @@ export default function ProfilePicture({ setShow, PRef, photos ,setNewProfile}) 
           </div>
           <h4>Other pictures</h4>
           <div className="old_pictures">
-            {photos
+            {photos && photos
               .filter(
                 (img) => img.folder !== `${user.username}/profile_pictures`
               )
@@ -111,6 +112,7 @@ export default function ProfilePicture({ setShow, PRef, photos ,setNewProfile}) 
           setShow={setShow}
           PRef={PRef}
           setNewProfile={setNewProfile}
+         
         />
       )}
     </div>

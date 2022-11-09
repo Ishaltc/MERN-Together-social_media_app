@@ -17,7 +17,7 @@ export default function CreatePost({ user, setVisible,profile }) {
           <LiveVideo color="#f3425f" />
           Live video
         </div>
-        <div className="createPost_icon hover1">
+        <div className="createPost_icon hover1" onClick={() => setVisible(true)}  >
           <Photo color="#4bbf67" />
           Photo/Video
         </div>

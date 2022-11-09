@@ -54,7 +54,7 @@ export default function UserRouter(){
     } catch (error) {
       dispatch({
         type: "POSTS_ERROR",
-        payload: error.response.data.message,
+        payload: error.response?.data?.message,
       });
     }
   };

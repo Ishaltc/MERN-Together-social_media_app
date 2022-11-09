@@ -59,6 +59,7 @@ export default function Profile({getAllPosts }) {
         }
       );
       if (data.okay === false) {
+        
         navigate("/profile");
       } else {
         try {
@@ -86,6 +87,7 @@ export default function Profile({getAllPosts }) {
         type: "PROFILE_ERROR",
         payload: error.response.data.message,
       });
+      console.log(error);
     }
   };
 

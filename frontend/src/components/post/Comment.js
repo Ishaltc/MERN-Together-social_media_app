@@ -16,8 +16,8 @@ export default function Comment({ comment }) {
           <img src={comment.image} alt="" className="comment_image" />
         )}
         <div className="comment_actions">
-          <span>Like</span>
-          <span>Replay</span>
+          {/* <span>Like</span>
+          <span>Replay</span> */}
           <span>
             <Moment fromNow interval={30}>
               {comment.commentAt}

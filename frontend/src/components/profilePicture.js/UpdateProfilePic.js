@@ -1,5 +1,5 @@
 import Cookies from "js-cookie";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Cropper from "react-easy-crop";
 import { useDispatch, useSelector } from "react-redux";
 import PulseLoader from "react-spinners/PulseLoader";
@@ -15,7 +15,8 @@ export default function UpdateProfilePicture({
   setError,
   setShow,
   PRef,
-  setNewProfile
+  setNewProfile,
+  
 }) {
   const dispatch = useDispatch();
   
@@ -24,14 +25,20 @@ export default function UpdateProfilePicture({
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [loading, setLoading] = useState(false);
+
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const slider = useRef(null);
   const { user } = useSelector((state) => ({ ...state }));
 
+ 
+  
   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
     // console.log(croppedArea, croppedAreaPixels);
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
+
+
+
 
   const zoomIn = () => {
     slider.current.stepUp();
@@ -75,9 +82,9 @@ export default function UpdateProfilePicture({
       formData.append("path", path);
      
       const res = await uploadImages(formData, path, user.token);
-      console.log(res)
+      
       const updated_picture = await newProfilePicture(res[0].url, user.token);
-    //   console.log(updated_picture);
+     
       if (updated_picture === "okay") {
         const new_post = await createPost(
           "profilePicture",
@@ -91,11 +98,12 @@ export default function UpdateProfilePicture({
     //     console.log(444444);
     // console.log({new_post})
         if (new_post === "okay") {
+        
            // console.log({new_post:1})
           setLoading(false);
           setImage("");
           PRef.current.style.backgroundImage = `url(${res[0].url})`;
-          setNewProfile((prev)=> !prev)
+           setNewProfile((prev)=> !prev)
           Cookies.set("user", 
             JSON.stringify({
                 ...user,
@@ -119,8 +127,10 @@ export default function UpdateProfilePicture({
       }
       setLoading(false);
     } catch (error) {
+      console.log(error)
       setLoading(false);
       setError(error.response.data.message);
+   
     }
   };
 
